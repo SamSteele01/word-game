@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Word game</title>
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+  </head>
+  <body>
+
+    <div class="title">
+      <h1>Mystery Word Game</h1>
+    </div>
+
+    <div class="endGame">
+      <h1>{{endGameMessage}}</h1>
+    </div>
+
+    {{#endGameWin}}
+      <p>You had {{tries}} left.</p>
+      <p>You were on {{difficulty}} mode.</p>
+      <p>Your word was {{theWord}}</p>
+      <form class="" action="/name" method="post">
+        <label for="">Please enter your name.</label>
+        <input type="text" name="name" value="">
+        <button type="submit" name="button">Post to High Scores</button>
+      </form>
+    {{/endGameWin}}
+
+    {{#endGameLose}}
+      <p>Image</p>
+      <img class="end" src={{image2}} alt="">
+    {{/endGameLose}}
+
+    <form class="" action="/restart" method="post">
+      <label for="">Play Again?</label>
+      <button type="submit" name="button">Restart Game</button>
+    </form>
+
+  </body>
+</html>
