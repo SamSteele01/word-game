@@ -87,16 +87,20 @@ app.get('/game', function(req,res) {
 app.post('/guess', function(req, res){
   // use validation to check for one letter, not numbers or symbols - return error
   letter = req.body.guessedLetter;
+  message = "";
   req.checkBody('guessedLetter', 'Must be only one letter').len(1,1);
   req.checkBody('guessedLetter', 'Must be a letter').isAlpha();
   // req.checkBody('letter', 'Must not be a number').isNaN();
   // req.checkBody('letter', 'Must not be a symbol').issymbol();not
   req.getValidationResult().then(function(result){
-    console.log(result.isEmpty);
-    console.log(result.array);
-    console.log(result.mapped);
-    console.log(result.throw);
-    message = result.throw;
+    if(!result.isEmpty()){
+    console.log(result.isEmpty());
+    // console.log(result.array());
+    // console.log(result.mapped());
+    // console.log(result.array()[0].msg);
+    message = result.array()[0].msg;
+    return;
+    }
   })
   res.redirect('game');
 })
@@ -158,19 +162,19 @@ function wordSmith(word, char){
   if(char!=""){
     if(theWordArray.includes(char)&&!correctGuessedLetters.includes(char)){
       correctGuessedLetters.push(char);
-      message = "";
+      // message = "";
     }else{
       if(wrongGuessedLetters.includes(" "+char)||correctGuessedLetters.includes(char)){
         message = "You already tried that letter, you idiot!";
       }
       else{
-        message = "";
+        // message = "";
         wrongGuessedLetters.push(" "+char);
         char = "";
         tries -= 1;
       }
     }
-    console.log(correctGuessedLetters.length);
+    // console.log(correctGuessedLetters.length);
   }
 
   theWordArray.forEach(function(currentValue) {
