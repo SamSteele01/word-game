@@ -26,6 +26,18 @@
     </div>
 
       <img src={{image}} alt="">
+      <h2>High Scores</h2>
+      <table>
+        {{#player}}
+            <tr>
+              <td>{{img}}</td>
+              <td>{{name}}</td>
+              <td>{{word}}</td>
+              <td>{{tries}} tries left</td>
+              <td>Difficulty: {{diff}}</td>
+            </tr>
+        {{/player}}
+      </table>
 
   </body>
 </html>

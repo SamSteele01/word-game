@@ -3,7 +3,9 @@ const mustache = require('mustache-express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
-const issymbol = require('issymbol');
+// const issymbol = require('issymbol');
+// const multer = require('multer');
+const highscore = require('./highscores.json');
 const fs = require('fs');
 const path = require('path');
 const app = express();
@@ -38,6 +40,7 @@ let difficulty = "";
 let endGameMessage ="";
 let endGameWin = [];
 let endGameLose = [];
+let player = [];
 
 app.get('/', function(req, res){
   res.redirect('index');
@@ -48,8 +51,20 @@ app.get('/index', function(req, res){
   wrongGuessedLetters = [];
   letter = "";
   message = "";
-
-  res.render('index', {image})
+  // read high scores from .json
+  fs.readFile('highscores.json', 'utf8', function (err, data){
+      if (err){
+          console.log(err);
+      } else {
+      highscores = JSON.parse(data);//object
+      highscores.players.map((player)=>{
+        
+      });//array
+      console.log(highscores);
+      console.log(player);
+      console.log(player[0].name);
+  }});
+  res.render('index', {image:image, player:player})
 })
 
 app.post('/setup', function(req, res){
@@ -98,6 +113,7 @@ app.post('/guess', function(req, res){
     // console.log(result.array());
     // console.log(result.mapped());
     // console.log(result.array()[0].msg);
+    tries += 1;
     message = result.array()[0].msg;
     return;
     }
@@ -113,11 +129,31 @@ app.get('/end', function(req, res){
   }
 })
 
-let name = "";
+app.post('/upload', function(req, res){
+  // uploads images => /images folder - needs to attach player[i]
+
+ })
+
 app.post('/name', function(req, res){
-  name = req.body.name;
-  endGameMessage = "High scores page comming soon!"
-  // need to make .json file to hold high scores & pictures
+  // name = req.body.name;
+  // endGameMessage = "High scores page comming soon!"
+  // img needs multer module ??
+  fs.readFile('highscores.json', 'utf8', function (err, data){
+      if (err){
+          console.log(err);
+      } else {
+      obj = JSON.parse(data); //now its an object
+      let newPlayerIndex = obj.players.length; //(number) sets player[i] to be new entry
+      // player[newPlayerIndex].img = //path - /images/player[i]
+      obj.players[newPlayerIndex].name = req.body.name;
+      obj.players[newPlayerIndex].word = theWord;
+      obj.players[newPlayerIndex].tries = tries;
+      obj.players[newPlayerIndex].diff = difficulty;
+      // player[newPlayerIndex].time = timer; //need game clock
+      // should sort by a score
+      json = JSON.stringify(obj); //converts back to json
+      fs.writeFile('highscores.json', json, 'utf8'); // writes to file
+  }});
   res.redirect('end');
  })
 
