@@ -57,12 +57,13 @@ app.get('/index', function(req, res){
           console.log(err);
       } else {
       highscores = JSON.parse(data);//object
-      highscores.players.map((player)=>{
-        
-      });//array
-      console.log(highscores);
-      console.log(player);
-      console.log(player[0].name);
+      // console.log(highscores.players);
+      player = highscores.players;
+      // highscores.players.map((player)=>{
+      //   console.log(player);
+      //   console.log(player.name);
+      //   // console.log(player[0].name);
+      // });//array
   }});
   res.render('index', {image:image, player:player})
 })
@@ -76,7 +77,6 @@ app.post('/setup', function(req, res){
   res.redirect('game');
 })
 
-// check for a win or lose - delay on redirect
 app.get('/game', function(req,res) {
   if(req.session.tries===undefined){
     res.redirect('index');
@@ -94,13 +94,13 @@ app.get('/game', function(req,res) {
       }else{
         // want to display "tries" as array of images
       res.render('game', {tries, theWord, wordObjectString, wrongGuessedLetters, message});
+      //----> theWord is for testing/debuging. Remove to play a real game <------
       }
     }
   }
 })
 
 app.post('/guess', function(req, res){
-  // use validation to check for one letter, not numbers or symbols - return error
   letter = req.body.guessedLetter;
   message = "";
   req.checkBody('guessedLetter', 'Must be only one letter').len(1,1);
@@ -110,9 +110,6 @@ app.post('/guess', function(req, res){
   req.getValidationResult().then(function(result){
     if(!result.isEmpty()){
     console.log(result.isEmpty());
-    // console.log(result.array());
-    // console.log(result.mapped());
-    // console.log(result.array()[0].msg);
     tries += 1;
     message = result.array()[0].msg;
     return;
@@ -131,7 +128,6 @@ app.get('/end', function(req, res){
 
 app.post('/upload', function(req, res){
   // uploads images => /images folder - needs to attach player[i]
-
  })
 
 app.post('/name', function(req, res){
@@ -210,7 +206,6 @@ function wordSmith(word, char){
         tries -= 1;
       }
     }
-    // console.log(correctGuessedLetters.length);
   }
 
   theWordArray.forEach(function(currentValue) {
