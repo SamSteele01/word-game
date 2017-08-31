@@ -1,1 +1,1 @@
-{"players":[{"img":"/images/player1","name":"Sam","word":"whatever","tries":"number","diff":"normal"},{"img":"/images/player2","name":"Steve","word":"whateverelse","tries":"1-8","diff":"hard"}]}
+{"players":[{"img":"/images/player1","name":"Sam","word":"whatever","tries":"number","diff":"normal"},{"img":"/images/player2","name":"Steve","word":"whateverelse","tries":"1-8","diff":"hard"},{"name":"Jake","word":"corge","tries":8,"diff":"easy"}]}

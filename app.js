@@ -4,7 +4,7 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
 // const issymbol = require('issymbol');
-// const multer = require('multer');
+const multer = require('multer');
 const highscore = require('./highscores.json');
 const fs = require('fs');
 const path = require('path');
@@ -29,6 +29,19 @@ app.use(session({
   saveUninitialized: true
 }))
 
+// var Storage = multer.diskStorage({
+//      destination: function(req, file, callback) {
+//          callback(null, "./Images");
+//      },
+//      filename: function(req, file, callback) {
+//          callback(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
+//      }
+//  });
+//
+//  var upload = multer({
+//      storage: Storage
+//  }).array("imgUploader", 1); //Field name and max count
+
 let wrongGuessedLetters = [];
 let correctGuessedLetters = [];
 let tries = 0;
@@ -51,21 +64,9 @@ app.get('/index', function(req, res){
   wrongGuessedLetters = [];
   letter = "";
   message = "";
-  // read high scores from .json
-  fs.readFile('highscores.json', 'utf8', function (err, data){
-      if (err){
-          console.log(err);
-      } else {
-      highscores = JSON.parse(data);//object
-      // console.log(highscores.players);
-      player = highscores.players;
-      // highscores.players.map((player)=>{
-      //   console.log(player);
-      //   console.log(player.name);
-      //   // console.log(player[0].name);
-      // });//array
-  }});
-  res.render('index', {image:image, player:player})
+  getHighscores(function(player){
+  res.render('index', {image:image, player:player});
+  })
 })
 
 app.post('/setup', function(req, res){
@@ -126,30 +127,36 @@ app.get('/end', function(req, res){
   }
 })
 
-app.post('/upload', function(req, res){
-  // uploads images => /images folder - needs to attach player[i]
- })
+// app.post("/api/Upload", function(req, res) {
+//    upload(req, res, function(err) {
+//        if (err) {
+//          endGameMessage = "The image failed to load."
+//         //  return res.redirect('end')
+//            return res.end("Something went wrong!");
+//        }
+//        endGameMessage = "Image uploaded sucessfully!"
+//        console.log(file.fieldname);
+//       //  return res.redirect('end');
+//        return res.end("File uploaded sucessfully!.");
+//    });
+// });
 
 app.post('/name', function(req, res){
-  // name = req.body.name;
-  // endGameMessage = "High scores page comming soon!"
-  // img needs multer module ??
   fs.readFile('highscores.json', 'utf8', function (err, data){
       if (err){
           console.log(err);
+          endGameMessage = "There was an error reading the high scores file.";
       } else {
       obj = JSON.parse(data); //now its an object
-      let newPlayerIndex = obj.players.length; //(number) sets player[i] to be new entry
+      let newPlayerIndex = obj.players.length;
+      // obj.players = array
       // player[newPlayerIndex].img = //path - /images/player[i]
-      obj.players[newPlayerIndex].name = req.body.name;
-      obj.players[newPlayerIndex].word = theWord;
-      obj.players[newPlayerIndex].tries = tries;
-      obj.players[newPlayerIndex].diff = difficulty;
-      // player[newPlayerIndex].time = timer; //need game clock
+      obj.players.push({name:req.body.name, word:theWord, tries:tries, diff:difficulty});
       // should sort by a score
       json = JSON.stringify(obj); //converts back to json
       fs.writeFile('highscores.json', json, 'utf8'); // writes to file
   }});
+  endGameMessage = "High score saved";
   res.redirect('end');
  })
 
@@ -180,7 +187,7 @@ function genWordByLength(difficulty){
     sizeMin = 20;
     sizeMax = 40;
   }
-  // want xhard and nightmare modes
+
   theWord = words[Math.floor(Math.random() * words.length)];
   while(theWord.length<=sizeMin||theWord.length>=sizeMax){
     theWord = words[Math.floor(Math.random() * words.length)];
@@ -194,13 +201,11 @@ function wordSmith(word, char){
   if(char!=""){
     if(theWordArray.includes(char)&&!correctGuessedLetters.includes(char)){
       correctGuessedLetters.push(char);
-      // message = "";
     }else{
       if(wrongGuessedLetters.includes(" "+char)||correctGuessedLetters.includes(char)){
         message = "You already tried that letter, you idiot!";
       }
       else{
-        // message = "";
         wrongGuessedLetters.push(" "+char);
         char = "";
         tries -= 1;
@@ -217,6 +222,17 @@ function wordSmith(word, char){
     }
   });
   return theModWordArray;
+}
+
+function getHighscores(callback){
+fs.readFile('highscores.json', 'utf8', function (err, data){
+    if (err){
+        console.log(err);
+    } else {
+    highscores = JSON.parse(data);
+    player = highscores.players;
+      callback(player);
+}});
 }
 
   app.listen(port, function() {

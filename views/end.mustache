@@ -16,21 +16,25 @@
     </div>
 
     {{#endGameWin}}
+
       <p>Your word was {{theWord}}.</p>
       <p>You had {{tries}} left.</p>
       <p>You were on {{difficulty}} mode.</p>
 
-      <form id="frmUploader" enctype="multipart/form-data" action="/upload" method="post">
+      <!-- <form id="frmUploader" enctype="multipart/form-data" action="api/Upload" method="post">
         <label for="imgUploader"></label>
-        <input type="file" name="imgUploader" />
+        <input type="file" name="imgUploader" multiple/>
         <input type="submit" name="submit" id="btnSubmit" value="Upload" />
-      </form>
+      </form> -->
+
       <form class="" action="/name" method="post">
         <label for="name">Please enter your name.</label>
         <input type="text" name="name" value="">
         <button type="submit" name="button">Post to High Scores</button>
       </form>
+
     {{/endGameWin}}
+
 
     {{#endGameLose}}
       <p>Image</p>

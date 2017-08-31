@@ -16,6 +16,7 @@
     "express-validator": "^3.2.1",
     "fs": "0.0.1-security",
     "issymbol": "^1.0.1",
+    "multer": "^1.3.0",
     "mustache-express": "^1.2.5"
   }
 }
